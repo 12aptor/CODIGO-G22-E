@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 import psycopg2
 
 app = Flask(__name__)
@@ -42,12 +42,44 @@ def get_users():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM users')
-        users = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+
+        users = []
+        for row in cursor.fetchall():
+            # user = dict(zip(column_names, row))
+            user = {
+                'id': row[0],
+                'name': row[1],
+                'email': row[2],
+                'created_at': str(row[3])
+            }
+            users.append(user)
+
         cursor.close()
         conn.close()
-        return users, 200
+        return jsonify(users), 200
     except Exception as e:
-        return { 'error': str(e) }, 500
+        return jsonify({ 'error': str(e) }), 500
+    
+@app.post('/users')
+def create_user():
+    try:
+        data = request.get_json()
+        name = data.get('name')
+        email = data.get('email')
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            'INSERT INTO users(name, email) VALUES (%s, %s);',
+            (name, email)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({ 'message': 'User created successfully' }), 201
+    except Exception as e:
+        return jsonify({ 'error': str(e) }), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
