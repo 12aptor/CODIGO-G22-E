@@ -14,6 +14,8 @@ class UserResource(Resource):
         try:
             data = request.get_json()
             validated_data = UserCreateSchema(**data)
+            print(validated_data.name)
+            print(validated_data.email)
             return 'Ok'
         except ValidationError as e:
             print(e.errors())
