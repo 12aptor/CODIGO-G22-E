@@ -11,7 +11,13 @@
     ```bash
     DATABASE_URI='postgresql://user:password@localhost:5432/db_name'
     ```
-4. Ejecutar el servidor
+4. Ejecutar migraciones
+    ```bash
+    flask db init # Inicializar la migración (Solo la primera vez)
+    flask db migrate -m "Create tables" # Crear las migraciones
+    flask db upgrade # Ejecutar las migraciones
+    ```
+5. Ejecutar el servidor
     ```bash
     python run.py
     ```

@@ -1,8 +1,9 @@
 from flask_restful import Resource
 from app.models.user_model import UserModel
-from flask import request
-from app.schemas.user_schema import UserCreateSchema
+from flask import request, jsonify
+from app.schemas.user_schema import UserCreateSchema, UserResponseSchema
 from pydantic import ValidationError
+from db import db
 
 class UserResource(Resource):
     def get(self):
@@ -14,10 +15,25 @@ class UserResource(Resource):
         try:
             data = request.get_json()
             validated_data = UserCreateSchema(**data)
-            print(validated_data.name)
-            print(validated_data.email)
-            return 'Ok'
+            user = UserModel(
+                name=validated_data.name,
+                email=validated_data.email
+            )
+            db.session.add(user)
+            db.session.commit()
+
+            response_data = UserResponseSchema(
+                id=user.id,
+                name=user.name,
+                email=user.email,
+                created_at=str(user.created_at)
+            )
+            return response_data.model_dump(), 201
         except ValidationError as e:
-            print(e.errors())
+            return {
+                'message': e.errors()
+            }, 400
         except Exception as e:
-            print(e)
+            return {
+                'message': str(e)
+            }, 500

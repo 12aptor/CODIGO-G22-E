@@ -1,0 +1,16 @@
+REQUISITOS PARA EL PROYECTO DE BACKEND
+
+[] Utilizar un framework (Flask, Django o Express)
+[] Utilizar una base de datos (PostgreSQL, MySQLo o MongoDB)
+[] Utilizar un ORM (SQLAlchemy, Django ORM o Prisma)
+[] Almenos crear un CRUD (Create, Read, Update y Delete)
+[] Utilizar rutas protegidas (JWT - Autenticación)
+[] Almenos un endpoint con lógica (Ejemplo: No vender un producto que no tenga stock)
+[] El proyecto este desplegado (Opcional)
+[] Utilizar archivos multimedia (Cargar imagenes, videos, documentos, etc)
+[] Documentar la API (Swagger)
+[] Consumir la API desde el frontend
+
+En grupos máximo 3 personas, no es obligatorio agruparse.
+
+Entrega: 14 de marzo de 2025
