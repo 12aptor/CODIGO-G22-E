@@ -1,5 +1,8 @@
 from flask_restful import Resource
 from app.models.user_model import UserModel
+from flask import request
+from app.schemas.user_schema import UserCreateSchema
+from pydantic import ValidationError
 
 class UserResource(Resource):
     def get(self):
@@ -8,4 +11,11 @@ class UserResource(Resource):
         return 'Ok'
 
     def post(self):
-        pass
+        try:
+            data = request.get_json()
+            validated_data = UserCreateSchema(**data)
+            return 'Ok'
+        except ValidationError as e:
+            print(e.errors())
+        except Exception as e:
+            print(e)

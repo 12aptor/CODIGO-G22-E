@@ -9,3 +9,5 @@ app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 
 db.init_app(app)
+
+from app.routes import api
