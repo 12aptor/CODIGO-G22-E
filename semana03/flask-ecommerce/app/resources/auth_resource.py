@@ -1,9 +1,9 @@
 from app.models.user_model import UserModel
 from flask_restful import Resource
 from flask import request
-from app.schemas.auth_schema import RegisterSchema, UserSchema
+from app.schemas.auth_schema import RegisterSchema, UserSchema, LoginSchema
 from pydantic import ValidationError
-from app.utils.passwords import hash_password
+from app.utils.passwords import hash_password, verify_password
 from db import db
 
 class RegisterResource(Resource):
@@ -54,6 +54,34 @@ class RegisterResource(Resource):
 class LoginResource(Resource):
     def post(self):
         try:
-            pass
+            data = request.get_json()
+            validated_data = LoginSchema(**data)
+
+            existing_user = UserModel.query.filter_by(email=validated_data.email).first()
+
+            if not existing_user:
+                return {
+                    'message': 'Email or password incorrect',
+                }, 401
+            
+            pwd_valid = verify_password(
+                validated_data.password,
+                existing_user.password
+            )
+
+            if not pwd_valid:
+                return {
+                    'message': 'Email or password incorrect',
+                }, 401
+            
+            access_token = ''
+            refresh_token = ''
+
+            return {
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, 200
         except Exception as e:
-            pass
+            return {
+                'message': 'Unexpected error',
+            }, 500
