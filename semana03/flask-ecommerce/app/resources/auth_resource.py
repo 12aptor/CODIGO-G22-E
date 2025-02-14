@@ -1,10 +1,23 @@
 from app.models.user_model import UserModel
 from flask_restful import Resource
 from flask import request
-from app.schemas.auth_schema import RegisterSchema, UserSchema, LoginSchema
+from app.schemas.auth_schema import (
+    RegisterSchema,
+    UserSchema,
+    LoginSchema
+)
 from pydantic import ValidationError
-from app.utils.passwords import hash_password, verify_password
+from app.utils.passwords import (
+    hash_password,
+    verify_password
+)
 from db import db
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token
+)
+from cryptography.fernet import Fernet
+import os
 
 class RegisterResource(Resource):
     def post(self):
@@ -74,14 +87,24 @@ class LoginResource(Resource):
                     'message': 'Email or password incorrect',
                 }, 401
             
-            access_token = ''
-            refresh_token = ''
+            key = os.environ.get('FERNET_SECRET_KEY').encode('utf-8')
+            fernet = Fernet(key)
+            user_id_bytes = str(existing_user.id).encode('utf-8')
+            hashed_user_id = fernet.encrypt(user_id_bytes)
+
+            access_token = create_access_token(identity={
+                'id': hashed_user_id.decode('utf-8'),
+                'name': existing_user.name,
+                'email': existing_user.email
+            })
+            refresh_token = create_refresh_token(identity=hashed_user_id.decode('utf-8'))
 
             return {
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }, 200
         except Exception as e:
+            print(e)
             return {
                 'message': 'Unexpected error',
             }, 500
