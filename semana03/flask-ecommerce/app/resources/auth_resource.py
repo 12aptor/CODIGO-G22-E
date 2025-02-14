@@ -92,11 +92,13 @@ class LoginResource(Resource):
             user_id_bytes = str(existing_user.id).encode('utf-8')
             hashed_user_id = fernet.encrypt(user_id_bytes)
 
-            access_token = create_access_token(identity={
-                'id': hashed_user_id.decode('utf-8'),
-                'name': existing_user.name,
-                'email': existing_user.email
-            })
+            access_token = create_access_token(
+                identity=hashed_user_id.decode('utf-8'),
+                additional_claims={
+                    'name': existing_user.name,
+                    'email': existing_user.email
+                }
+            )
             refresh_token = create_refresh_token(identity=hashed_user_id.decode('utf-8'))
 
             return {
