@@ -18,7 +18,23 @@ class ProductResource(Resource):
 
             response_data = []
             for product in products:
-                pass
+                response_data.append(
+                    ProductSchema(
+                        id=product.id,
+                        code=product.code,
+                        name=product.name,
+                        image=cloudinary.utils.cloudinary_url(product.image)[0],
+                        description=product.description,
+                        brand=product.brand,
+                        size=product.size,
+                        price=product.price,
+                        stock=product.stock,
+                        status=product.status,
+                        created_at=str(product.created_at),
+                        updated_at=str(product.updated_at),
+                        category_id=product.category_id
+                    ).model_dump()
+                )
 
             return response_data, 200
         except Exception as e:
@@ -63,9 +79,8 @@ class ProductResource(Resource):
                 ProductModel.id.desc()
             ).first()
 
-            if not last_product:
-                product_code = 'P-0001'
-            else:
+            product_code = 'P-0001'
+            if last_product:
                 last_code = last_product.code
                 last_number = int(last_code.split('-')[1])
                 new_number = last_number + 1
@@ -89,7 +104,7 @@ class ProductResource(Resource):
                 id=product.id,
                 code=product.code,
                 name=product.name,
-                image=product.image,
+                image=cloudinary.utils.cloudinary_url(product.image)[0],
                 description=product.description,
                 brand=product.brand,
                 size=product.size,
@@ -100,12 +115,13 @@ class ProductResource(Resource):
                 updated_at=str(product.updated_at),
                 category_id=product.category_id
             )
-            return response_data, 200
+            return response_data.model_dump(), 200
         except ValidationError as e:
             return {
                 'message', e.errors()
             }, 400
         except Exception as e:
+            db.session.rollback()
             return {
                 'message': 'Unexpected error',
             }, 500
