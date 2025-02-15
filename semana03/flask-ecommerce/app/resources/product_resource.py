@@ -57,7 +57,7 @@ class ProductResource(Resource):
             image = request.files.get('image')
 
             if not image.content_type.startswith('image/'):
-                raise ValidationError('Invalida image format')
+                raise Exception('Invalida image format')
             
             file_size = image.read()
             image.seek(0)
@@ -65,7 +65,7 @@ class ProductResource(Resource):
             mb_size = kb_size / 1024
 
             if mb_size > 2:
-                raise ValidationError('Image size is too big')
+                raise Exception('Image size is too big')
             
             filename = image.filename.split('.')[0]
             public_id = f'{uuid.uuid4()}-{filename}'
