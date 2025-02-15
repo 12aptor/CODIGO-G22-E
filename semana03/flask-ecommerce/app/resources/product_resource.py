@@ -3,7 +3,13 @@ from db import db
 from pydantic import ValidationError
 from flask_restful import Resource
 from app.models.product_model import ProductModel
-from app.schemas.product_schema import CreateProductSchema
+from app.schemas.product_schema import (
+    CreateProductSchema,
+    ProductSchema
+)
+import app.utils.cloudinary_config
+import cloudinary.uploader
+import uuid
 
 class ProductResource(Resource):
     def get(self):
@@ -31,11 +37,75 @@ class ProductResource(Resource):
                 stock=request.form.get('stock'),
                 category_id=request.form.get('category_id')
             )
-            print(validated_data)
-            # Validar la imagen
-            return 'Ok', 200
+
+            image = request.files.get('image')
+
+            if not image.content_type.startswith('image/'):
+                raise ValidationError('Invalida image format')
+            
+            file_size = image.read()
+            image.seek(0)
+            kb_size = len(file_size) / 1024
+            mb_size = kb_size / 1024
+
+            if mb_size > 2:
+                raise ValidationError('Image size is too big')
+            
+            filename = image.filename.split('.')[0]
+            public_id = f'{uuid.uuid4()}-{filename}'
+
+            cloudinary.uploader.upload(
+                file=image.stream,
+                public_id=public_id
+            )
+
+            last_product = ProductModel.query.order_by(
+                ProductModel.id.desc()
+            ).first()
+
+            if not last_product:
+                product_code = 'P-0001'
+            else:
+                last_code = last_product.code
+                last_number = int(last_code.split('-')[1])
+                new_number = last_number + 1
+                product_code = 'P-' + str(new_number).zfill(4)
+
+            product = ProductModel(
+                name=validated_data.name,
+                code=product_code,
+                description=validated_data.description,
+                image=public_id,
+                brand=validated_data.brand,
+                size=validated_data.size,
+                price=validated_data.price,
+                stock=validated_data.stock,
+                category_id=validated_data.category_id
+            )
+            db.session.add(product)
+            db.session.commit()
+
+            response_data = ProductSchema(
+                id=product.id,
+                code=product.code,
+                name=product.name,
+                image=product.image,
+                description=product.description,
+                brand=product.brand,
+                size=product.size,
+                price=product.price,
+                stock=product.stock,
+                status=product.status,
+                created_at=str(product.created_at),
+                updated_at=str(product.updated_at),
+                category_id=product.category_id
+            )
+            return response_data, 200
+        except ValidationError as e:
+            return {
+                'message', e.errors()
+            }, 400
         except Exception as e:
-            print(e)
             return {
                 'message': 'Unexpected error',
             }, 500

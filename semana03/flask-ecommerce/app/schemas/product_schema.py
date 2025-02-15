@@ -8,3 +8,11 @@ class CreateProductSchema(BaseModel):
     price: float
     stock: int
     category_id: int
+
+class ProductSchema(CreateProductSchema):
+    id: int
+    code: str
+    image: str
+    status: bool
+    created_at: str
+    updated_at: str
