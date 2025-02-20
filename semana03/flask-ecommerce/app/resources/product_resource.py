@@ -14,7 +14,24 @@ import uuid
 class ProductResource(Resource):
     def get(self):
         try:
-            products = ProductModel.query.all()
+            page = request.args.get('page', 1, type=int)
+            per_page = request.args.get('per_page', 10, type=int)
+            # search = request.args.get('search', None)
+            # start_date = request.args.get('start_date', None)
+            # end_date = request.args.get('end_date', None)
+
+            products = ProductModel.query.filter(
+                ProductModel.status == True,
+                # ProductModel.name.like(f'%{search}%'),
+                ProductModel.created_at.between(
+                    '2025-01-01',
+                    '2025-02-19'
+                )
+            ).paginate(
+                page=page,
+                per_page=per_page,
+                error_out=False
+            )
 
             response_data = []
             for product in products:
@@ -36,8 +53,18 @@ class ProductResource(Resource):
                     ).model_dump()
                 )
 
+            # return {
+            #     'total': products.total,
+            #     'pages': products.pages,
+            #     'current_page': products.page,
+            #     'per_page': products.per_page,
+            #     'has_next': products.has_next,
+            #     'has_prev': products.has_prev,
+            #     'items': response_data
+            # }, 200
             return response_data, 200
         except Exception as e:
+            print(e)
             return {
                 'message': 'Unexpected error',
             }, 500
