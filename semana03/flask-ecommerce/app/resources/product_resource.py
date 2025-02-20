@@ -229,4 +229,22 @@ class ProductManageResource(Resource):
             }, 500
 
     def delete(self, product_id):
-        pass
+        try:
+            product = ProductModel.query.get(product_id)
+
+            if not product:
+                raise Exception('Product not found')
+            
+            product.status = False
+
+            # db.session.delete(product)
+            db.session.commit()
+            
+            return {
+                'message': 'Product deleted successfully'
+            }, 200
+        except Exception as e:
+            db.session.rollback()
+            return {
+                'message': 'Unexpected error',
+            }, 500
