@@ -9,7 +9,9 @@ from sqlalchemy import (
     func,
     Enum as SQLAlchemyEnum
 )
+from sqlalchemy.orm import relationship
 from enum import Enum
+from app.models.sale_detail_model import SaleDetailModel
 
 class SaleStatus(Enum):
     PENDING = 'PENDING'
@@ -25,3 +27,5 @@ class SaleModel(db.Model):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     customer_id = Column(Integer, ForeignKey('customers.id'))
+
+    sale_details = relationship(SaleDetailModel)
