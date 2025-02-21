@@ -7,7 +7,10 @@ from app.resources.product_resource import (
     ProductResource,
     ProductManageResource
 )
-from app.resources.sale_resource import SaleResource
+from app.resources.sale_resource import (
+    SaleResource,
+    DownloadInvoiceResource
+)
 
 api = Api(app, prefix='/api')
 
@@ -20,3 +23,4 @@ api.add_resource(ProductResource, '/products')
 api.add_resource(ProductManageResource, '/products/<int:product_id>')
 
 api.add_resource(SaleResource, '/sales')
+api.add_resource(DownloadInvoiceResource, '/sales/<int:sale_id>/pdf')

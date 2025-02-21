@@ -12,6 +12,9 @@ from app.models.customer_model import CustomerModel
 from app.models.sale_detail_model import SaleDetailModel
 from app.models.product_model import ProductModel
 from db import db
+from fpdf import FPDF
+import io
+from flask import send_file, Response
 
 class SaleResource(Resource):
     def get(self):
@@ -137,6 +140,36 @@ class SaleResource(Resource):
             return 'Ok', 200
         except Exception as e:
             db.session.rollback()
+            return {
+                'message': 'Unexpected error',
+            }, 500
+        
+class DownloadInvoiceResource(Resource):
+    def get(self, sale_id):
+        try:
+            sale = SaleModel.query.get(sale_id)
+
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font('Arial', size=12)
+            pdf.cell(200, 10, txt=f'INVOICE {sale.code}', ln=1, align='C')
+
+            pdf_output = pdf.output(dest='S').encode('latin1')
+
+            # return send_file(
+            #     pdf_output,
+            #     mimetype='application/pdf',
+            #     as_attachment=True,
+            # )
+            return Response(
+                pdf_output,
+                mimetype='application/pdf',
+                headers={
+                    'Content-Disposition': f'attachment; filename=factura.pdf'
+                }
+            )
+        except Exception as e:
+            print(e)
             return {
                 'message': 'Unexpected error',
             }, 500
