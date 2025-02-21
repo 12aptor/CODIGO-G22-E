@@ -18,6 +18,14 @@ class CreateSaleSchema(BaseModel):
     customer: CreateCustomerSchema
     details: list[CreateSaleDetailSchema]
 
+class CustomerSchema(BaseModel):
+    id: int
+    name: str
+    last_name: str
+    email: EmailStr
+    address: str
+    document_number: str
+
 class SaleSchema(BaseModel):
     id: int
     code: str
@@ -25,4 +33,9 @@ class SaleSchema(BaseModel):
     status: str
     created_at: str
     updated_at: str
-    customer_id: int
+
+class SaleDetailSchema(BaseModel):
+    id: int
+    quantity: int
+    price: float
+    subtotal: float

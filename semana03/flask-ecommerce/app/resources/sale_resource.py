@@ -3,8 +3,11 @@ from app.models.sale_model import SaleModel
 from flask import request
 from app.schemas.sale_schema import (
     CreateSaleSchema,
-    SaleSchema
+    SaleSchema,
+    CustomerSchema,
+    SaleDetailSchema
 )
+from app.schemas.product_schema import SaleProductSchema
 from app.models.customer_model import CustomerModel
 from app.models.sale_detail_model import SaleDetailModel
 from app.models.product_model import ProductModel
@@ -17,17 +20,42 @@ class SaleResource(Resource):
 
             response_data = []
             for sale in sales:
-                response_data.append(
-                    SaleSchema(
-                        id=sale.id,
-                        code=sale.code,
-                        total=sale.total,
-                        status=sale.status,
-                        created_at=str(sale.created_at),
-                        updated_at=str(sale.updated_at),
-                        customer_id=sale.customer_id
+                sale_dict = SaleSchema(
+                    id=sale.id,
+                    code=sale.code,
+                    total=sale.total,
+                    status=sale.status,
+                    created_at=str(sale.created_at),
+                    updated_at=str(sale.updated_at)
+                ).model_dump()
+
+                sale_dict['customer'] = CustomerSchema(
+                    id=sale.customer.id,
+                    name=sale.customer.name,
+                    last_name=sale.customer.last_name,
+                    email=sale.customer.email,
+                    address=sale.customer.address,
+                    document_number=sale.customer.document_number
+                ).model_dump()
+
+                sale_dict['details'] = []
+                for sale_detail in sale.sale_details:
+                    sale_detail_dict = SaleDetailSchema(
+                        id=sale_detail.id,
+                        quantity=sale_detail.quantity,
+                        price=sale_detail.price,
+                        subtotal=sale_detail.subtotal
                     ).model_dump()
-                )
+
+                    sale_detail_dict['product'] = SaleProductSchema(
+                        id=sale_detail.product.id,
+                        code=sale_detail.product.code,
+                        name=sale_detail.product.name,
+                    ).model_dump()
+
+                    sale_dict['details'].append(sale_detail_dict)
+
+                response_data.append(sale_dict)
 
             return response_data, 200
         except Exception as e:
@@ -73,6 +101,8 @@ class SaleResource(Resource):
                 if detail.quantity > product.stock:
                     raise Exception('Product out of stock')
                 
+                # Validar también precio, subtotal, etc
+
                 product.stock -= detail.quantity
 
                 sale_detail = SaleDetailModel(

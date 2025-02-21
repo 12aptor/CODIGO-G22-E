@@ -16,3 +16,8 @@ class ProductSchema(CreateProductSchema):
     status: bool
     created_at: str
     updated_at: str
+
+class SaleProductSchema(BaseModel):
+    id: int
+    code: str
+    name: str
