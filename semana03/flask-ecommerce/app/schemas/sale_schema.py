@@ -19,4 +19,10 @@ class CreateSaleSchema(BaseModel):
     details: list[CreateSaleDetailSchema]
 
 class SaleSchema(BaseModel):
-    pass
+    id: int
+    code: str
+    total: float
+    status: str
+    created_at: str
+    updated_at: str
+    customer_id: int

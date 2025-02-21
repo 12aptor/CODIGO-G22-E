@@ -12,6 +12,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from enum import Enum
 from app.models.sale_detail_model import SaleDetailModel
+from app.models.customer_model import CustomerModel
 
 class SaleStatus(Enum):
     PENDING = 'PENDING'
@@ -29,3 +30,7 @@ class SaleModel(db.Model):
     customer_id = Column(Integer, ForeignKey('customers.id'))
 
     sale_details = relationship(SaleDetailModel)
+    customer = relationship(CustomerModel)
+
+    def __repr__(self):
+        return f'<SaleModel {self.code}>'

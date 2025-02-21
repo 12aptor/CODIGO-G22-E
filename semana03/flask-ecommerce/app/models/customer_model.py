@@ -13,3 +13,6 @@ class CustomerModel(db.Model):
     email = Column(String(100))
     address = Column(String(250))
     document_number = Column(String(11), unique=True)
+
+    def __repr__(self):
+        return f'<CustomerModel {self.document_number}>'

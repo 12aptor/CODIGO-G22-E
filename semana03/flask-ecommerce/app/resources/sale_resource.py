@@ -1,7 +1,10 @@
 from flask_restful import Resource
 from app.models.sale_model import SaleModel
 from flask import request
-from app.schemas.sale_schema import CreateSaleSchema
+from app.schemas.sale_schema import (
+    CreateSaleSchema,
+    SaleSchema
+)
 from app.models.customer_model import CustomerModel
 from app.models.sale_detail_model import SaleDetailModel
 from app.models.product_model import ProductModel
@@ -15,7 +18,15 @@ class SaleResource(Resource):
             response_data = []
             for sale in sales:
                 response_data.append(
-
+                    SaleSchema(
+                        id=sale.id,
+                        code=sale.code,
+                        total=sale.total,
+                        status=sale.status,
+                        created_at=str(sale.created_at),
+                        updated_at=str(sale.updated_at),
+                        customer_id=sale.customer_id
+                    ).model_dump()
                 )
 
             return response_data, 200
@@ -94,7 +105,6 @@ class SaleResource(Resource):
             db.session.commit()
             
             return 'Ok', 200
-        
         except Exception as e:
             db.session.rollback()
             return {
