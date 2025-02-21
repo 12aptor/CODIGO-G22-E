@@ -156,18 +156,19 @@ class DownloadInvoiceResource(Resource):
 
             pdf_output = pdf.output(dest='S').encode('latin1')
 
-            # return send_file(
-            #     pdf_output,
-            #     mimetype='application/pdf',
-            #     as_attachment=True,
-            # )
-            return Response(
+            return send_file(
                 pdf_output,
                 mimetype='application/pdf',
-                headers={
-                    'Content-Disposition': f'attachment; filename=factura.pdf'
-                }
+                as_attachment=True,
+                download_name=f'factura.pdf'
             )
+            # return Response(
+            #     pdf_output,
+            #     mimetype='application/pdf',
+            #     headers={
+            #         'Content-Disposition': f'attachment; filename=factura.pdf'
+            #     }
+            # )
         except Exception as e:
             print(e)
             return {
