@@ -170,7 +170,6 @@ class DownloadInvoiceResource(Resource):
             #     }
             # )
         except Exception as e:
-            print(e)
             return {
                 'message': 'Unexpected error',
             }, 500
