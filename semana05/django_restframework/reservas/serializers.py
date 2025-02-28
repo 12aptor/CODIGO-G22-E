@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CanchaModel
+from .models import CanchaModel, ReservaModel
 
 class CanchaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,3 +7,8 @@ class CanchaSerializer(serializers.ModelSerializer):
         fields = '__all__'
         # fields = ('id', 'nombre', 'direccion')
         # exclude = ('creado_en',)
+
+class ReservaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReservaModel
+        fields = '__all__'
