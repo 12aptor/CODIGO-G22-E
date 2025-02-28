@@ -24,3 +24,6 @@ class ReservaModel(models.Model):
         related_name='reservas',
         db_column='cancha_id' 
     )
+
+    class Meta:
+        db_table = 'reservas'
