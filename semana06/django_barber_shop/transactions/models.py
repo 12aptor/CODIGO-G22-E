@@ -9,6 +9,9 @@ class CustomerModel(models.Model):
     document_number = models.CharField(max_length=20, unique=True)
     address = models.CharField(max_length=200)
 
+    class Meta:
+        db_table = 'customers'
+
 class AppointmentModel(models.Model):
     id = models.AutoField(primary_key=True)
     appointiment_data = models.DateTimeField()
@@ -40,6 +43,9 @@ class AppointmentModel(models.Model):
         db_column='customer_id'
     )
 
+    class Meta:
+        db_table = 'appointments'
+
 class PaymentModel(models.Model):
     id = models.AutoField(primary_key=True)
     amount = models.IntegerField()
@@ -62,3 +68,6 @@ class PaymentModel(models.Model):
         related_name='payments',
         db_column='appointment_id'
     )
+
+    class Meta:
+        db_table = 'payments'
