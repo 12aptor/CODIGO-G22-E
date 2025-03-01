@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from .manager import UserManager
 
 class RoleModel(models.Model):
@@ -19,9 +19,9 @@ class RoleModel(models.Model):
     class Meta:
         db_table = 'roles'
 
-class UserModel(AbstractUser):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
+class UserModel(AbstractBaseUser):
+    name = models.CharField(max_length=100, null=True)
+    email = models.EmailField(max_length=100, unique=True)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,6 +31,8 @@ class UserModel(AbstractUser):
         related_name='users',
         db_column='role_id'
     )
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     objects = UserManager()
 
