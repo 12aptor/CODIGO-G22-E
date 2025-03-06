@@ -7,4 +7,7 @@ urlpatterns = [
     path('services/update/<int:pk>', ServiceUpdateView.as_view()),
     path('services/destroy/<int:pk>', ServiceDestroyView.as_view()),
     path('services/retrieve/<int:pk>', ServiceRetrieveView.as_view()),
+
+    path('barbers/list', BarberListView.as_view()),
+    path('barbers/create', BarberCreateView.as_view()),
 ]

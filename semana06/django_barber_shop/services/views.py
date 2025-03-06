@@ -1,8 +1,14 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from django.http import Http404
-from .models import ServiceModel
-from .serializers import ServiceSerializer
+from .models import (
+    ServiceModel,
+    BarberModel,
+)
+from .serializers import (
+    ServiceSerializer,
+    BarberSerializer,
+)
 
 class ServiceListView(generics.ListAPIView):
     queryset = ServiceModel.objects.all()
@@ -79,3 +85,29 @@ class ServiceRetrieveView(generics.RetrieveAPIView):
                 'object': 'retrieve_service',
                 'error': 'service not found'
             }, status=status.HTTP_400_BAD_REQUEST)
+        
+class BarberListView(generics.ListAPIView):
+    queryset = BarberModel.objects.all()
+    serializer_class = BarberSerializer
+
+    def get_queryset(self):
+        return BarberModel.objects.filter(status=True)
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+
+        return Response({
+            'object': 'list_barbers',
+            'data': response.data
+        }, status=status.HTTP_200_OK)
+    
+class BarberCreateView(generics.CreateAPIView):
+    serializer_class = BarberSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+
+        return Response({
+            'object': 'create_barber',
+            'data': response.data
+        }, status=status.HTTP_200_OK)
