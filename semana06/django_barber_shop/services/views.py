@@ -1,13 +1,16 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from django.http import Http404
+from datetime import time
 from .models import (
     ServiceModel,
     BarberModel,
+    ScheduleModel,
 )
 from .serializers import (
     ServiceSerializer,
     BarberSerializer,
+    ScheduleSerializer,
 )
 
 class ServiceListView(generics.ListAPIView):
@@ -91,7 +94,7 @@ class BarberListView(generics.ListAPIView):
     serializer_class = BarberSerializer
 
     def get_queryset(self):
-        return BarberModel.objects.filter(status=True)
+        return self.queryset.filter(status=True)
 
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
@@ -168,3 +171,49 @@ class BarberRetrieveView(generics.RetrieveAPIView):
                 'object': 'retrieve_barber',
                 'error': 'barber not found'
             }, status=status.HTTP_400_BAD_REQUEST)
+        
+class BarberAvailableView(generics.ListAPIView):
+    queryset = BarberModel.objects.all()
+    serializer_class = BarberSerializer
+
+    def get_queryset(self):
+        day = self.kwargs['day'] # MONDAY, TUESDAY, ...
+        hour = self.kwargs['hour'] # 13:00
+        hour_time = time.fromisoformat(hour)
+
+        return self.queryset.filter(
+            schedules__day_of_week=day,
+            schedules__start_time__lte=hour_time,
+            schedules__end_time__gte=hour_time
+        ).distinct()
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+
+        return Response({
+            'object': 'available_barbers',
+            'data': response.data
+        }, status=status.HTTP_200_OK)
+        
+class ScheduleListView(generics.ListAPIView):
+    queryset = ScheduleModel.objects.all()
+    serializer_class = ScheduleSerializer
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+
+        return Response({
+            'object': 'list_schedules',
+            'data': response.data
+        }, status=status.HTTP_200_OK)
+    
+class ScheduleCreateView(generics.CreateAPIView):
+    serializer_class = ScheduleSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+
+        return Response({
+            'object': 'create_schedule',
+            'data': response.data
+        }, status=status.HTTP_200_OK)

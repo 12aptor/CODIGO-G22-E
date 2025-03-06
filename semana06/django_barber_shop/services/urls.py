@@ -13,4 +13,8 @@ urlpatterns = [
     path('barbers/update/<int:pk>' , BarberUpdateView.as_view()),
     path('barbers/destroy/<int:pk>', BarberDestroyView.as_view()),
     path('barbers/retrieve/<int:pk>', BarberRetrieveView.as_view()),
+    path('barbers/available/<str:day>/<str:hour>', BarberAvailableView.as_view()),
+
+    path('schedules/list', ScheduleListView.as_view()),
+    path('schedules/create', ScheduleCreateView.as_view()),
 ]
