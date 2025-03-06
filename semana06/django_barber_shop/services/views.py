@@ -111,3 +111,60 @@ class BarberCreateView(generics.CreateAPIView):
             'object': 'create_barber',
             'data': response.data
         }, status=status.HTTP_200_OK)
+    
+class BarberUpdateView(generics.UpdateAPIView):
+    queryset = BarberModel.objects.all()
+    serializer_class = BarberSerializer
+
+    def update(self, request, *args, **kwargs):
+        try:
+            response = super().update(request, *args, **kwargs)
+
+            return Response({
+                'object': 'update_barber',
+                'data': response.data
+            }, status=status.HTTP_200_OK)
+        except Http404:
+            return Response({
+                'object': 'update_barber',
+                'error': 'barber not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+class BarberDestroyView(generics.DestroyAPIView):
+    queryset = BarberModel.objects.all()
+    # serializer_class = BarberSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            instance.status = False
+            instance.save()
+
+            # serializer = self.get_serializer(instance)
+
+            return Response({
+                'object': 'destroy_barber'
+            }, status=status.HTTP_200_OK)
+        except Http404:
+            return Response({
+                'object': 'destroy_barber',
+                'error': 'barber not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+class BarberRetrieveView(generics.RetrieveAPIView):
+    queryset = BarberModel.objects.all()
+    serializer_class = BarberSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            response = super().retrieve(request, *args, **kwargs)
+
+            return Response({
+                'object': 'retrieve_barber',
+                'data': response.data
+            }, status=status.HTTP_200_OK)
+        except Http404:
+            return Response({
+                'object': 'retrieve_barber',
+                'error': 'barber not found'
+            }, status=status.HTTP_400_BAD_REQUEST)

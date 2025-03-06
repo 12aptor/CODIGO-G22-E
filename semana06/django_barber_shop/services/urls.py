@@ -10,4 +10,7 @@ urlpatterns = [
 
     path('barbers/list', BarberListView.as_view()),
     path('barbers/create', BarberCreateView.as_view()),
+    path('barbers/update/<int:pk>' , BarberUpdateView.as_view()),
+    path('barbers/destroy/<int:pk>', BarberDestroyView.as_view()),
+    path('barbers/retrieve/<int:pk>', BarberRetrieveView.as_view()),
 ]
