@@ -9,4 +9,5 @@ urlpatterns = [
     path('roles/retrieve/<int:pk>', RoleRetrieveView.as_view()),
 
     path('auth/register', AuthRegisterView.as_view()),
+    path('auth/login', AuthLoginView.as_view()),
 ]

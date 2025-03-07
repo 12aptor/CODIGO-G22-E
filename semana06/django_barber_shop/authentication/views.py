@@ -1,12 +1,15 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from django.http import Http404
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.exceptions import ValidationError
 from .models import (
     RoleModel,
 )
 from .serializers import (
     RoleSerializer,
     UserSerializer,
+    LoginSerializer,
 )
 
 class RoleListView(generics.ListAPIView):
@@ -88,4 +91,21 @@ class AuthRegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
     def create(self, request):
-        pass
+        response = super().create(request)
+
+        return Response({
+            'object': 'register_user',
+            'data': response.data
+        }, status=status.HTTP_200_OK)
+    
+class AuthLoginView(TokenObtainPairView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        try:
+            return super().post(request)
+        except ValidationError:
+            return Response({
+                'object': 'login_user',
+                'error': 'Invalid email or password'
+            })
