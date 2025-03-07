@@ -4,22 +4,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('transactions', '0001_initial'),
+        ("transactions", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelTable(
-            name='appointmentmodel',
-            table='appointments',
+            name="appointmentmodel",
+            table="appointments",
         ),
         migrations.AlterModelTable(
-            name='customermodel',
-            table='customers',
+            name="customermodel",
+            table="customers",
         ),
         migrations.AlterModelTable(
-            name='paymentmodel',
-            table='payments',
+            name="paymentmodel",
+            table="payments",
         ),
     ]

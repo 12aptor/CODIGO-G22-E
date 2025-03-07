@@ -2,6 +2,7 @@ from django.db import models
 from authentication.models import UserModel
 from services.models import BarberModel, ServiceModel
 
+
 class CustomerModel(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
@@ -10,7 +11,8 @@ class CustomerModel(models.Model):
     address = models.CharField(max_length=200)
 
     class Meta:
-        db_table = 'customers'
+        db_table = "customers"
+
 
 class AppointmentModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -21,53 +23,51 @@ class AppointmentModel(models.Model):
     user = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE,
-        related_name='appointments',
-        db_column='user_id'
+        related_name="appointments",
+        db_column="user_id",
     )
     barber = models.ForeignKey(
         BarberModel,
         on_delete=models.CASCADE,
-        related_name='appointments',
-        db_column='barber_id'
+        related_name="appointments",
+        db_column="barber_id",
     )
     service = models.ForeignKey(
         ServiceModel,
         on_delete=models.CASCADE,
-        related_name='appointments',
-        db_column='service_id'
+        related_name="appointments",
+        db_column="service_id",
     )
     customer = models.ForeignKey(
         CustomerModel,
         on_delete=models.CASCADE,
-        related_name='appointments',
-        db_column='customer_id'
+        related_name="appointments",
+        db_column="customer_id",
     )
 
     class Meta:
-        db_table = 'appointments'
+        db_table = "appointments"
+
 
 class PaymentModel(models.Model):
     id = models.AutoField(primary_key=True)
     amount = models.IntegerField()
 
     PAYMENT_METHOD_CHOICES = (
-        ('CASH', 'CASH'),
-        ('CARD', 'CARD'),
-        ('YAPE', 'YAPE'),
-        ('PLIN', 'PLIN'),
+        ("CASH", "CASH"),
+        ("CARD", "CARD"),
+        ("YAPE", "YAPE"),
+        ("PLIN", "PLIN"),
     )
 
-    payment_method = models.CharField(
-        choices=PAYMENT_METHOD_CHOICES,
-        max_length=10
-    )
+    payment_method = models.CharField(choices=PAYMENT_METHOD_CHOICES, max_length=10)
     payment_date = models.DateTimeField()
     appointment = models.ForeignKey(
         AppointmentModel,
         on_delete=models.CASCADE,
-        related_name='payments',
-        db_column='appointment_id'
+        related_name="payments",
+        db_column="appointment_id",
     )
 
     class Meta:
-        db_table = 'payments'
+        db_table = "payments"

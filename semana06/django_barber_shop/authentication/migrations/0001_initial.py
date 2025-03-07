@@ -5,40 +5,66 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='RoleModel',
+            name="RoleModel",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('name', models.CharField(choices=[('ADMIN', 'ADMIN'), ('USER', 'USER')], default='USER', max_length=10)),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "name",
+                    models.CharField(
+                        choices=[("ADMIN", "ADMIN"), ("USER", "USER")],
+                        default="USER",
+                        max_length=10,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'roles',
+                "db_table": "roles",
             },
         ),
         migrations.CreateModel(
-            name='UserModel',
+            name="UserModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('name', models.CharField(max_length=100, null=True)),
-                ('email', models.EmailField(max_length=100, unique=True)),
-                ('status', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('is_staff', models.BooleanField(default=False)),
-                ('is_superuser', models.BooleanField(default=False)),
-                ('role', models.ForeignKey(db_column='role_id', on_delete=django.db.models.deletion.CASCADE, related_name='users', to='authentication.rolemodel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, null=True)),
+                ("email", models.EmailField(max_length=100, unique=True)),
+                ("status", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("is_staff", models.BooleanField(default=False)),
+                ("is_superuser", models.BooleanField(default=False)),
+                (
+                    "role",
+                    models.ForeignKey(
+                        db_column="role_id",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="users",
+                        to="authentication.rolemodel",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'users',
+                "db_table": "users",
             },
         ),
     ]
