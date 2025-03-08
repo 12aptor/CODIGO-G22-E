@@ -3,30 +3,42 @@ from .models import (
     CustomerModel,
     AppointmentModel,
 )
-from authentication.serializers import UserSerializer
 from services.serializers import (
     BarberSerializer,
     ServiceSerializer,
 )
+from authentication.models import UserModel
+from services.models import BarberModel, ServiceModel
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerModel
         fields = ("name", "email", "document_number", "address")
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ("name", "email", "role")
+
 class AppointmentSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
-    user = UserSerializer(read_only=True)
-    barber = BarberSerializer(read_only=True)
-    service = ServiceSerializer(read_only=True)
 
     class Meta:
         model = AppointmentModel
         fields = ("appointment_date", "user", "barber", "service", "customer")
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['user'] = UserSerializer(instance.user).data
+        representation['barber'] = BarberSerializer(instance.barber).data
+        representation['service'] = ServiceSerializer(instance.service).data
+
+        return representation
+
     def create(self, validated_data):
         customer = validated_data.pop("customer")
         customer, _ = CustomerModel.objects.get_or_create(
+            email=customer.get("email"),
             document_number=customer.get("document_number"),
             defaults=customer,
         )
