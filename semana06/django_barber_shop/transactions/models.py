@@ -16,7 +16,7 @@ class CustomerModel(models.Model):
 
 class AppointmentModel(models.Model):
     id = models.AutoField(primary_key=True)
-    appointiment_data = models.DateTimeField()
+    appointment_date = models.DateTimeField()
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
