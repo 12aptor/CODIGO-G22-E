@@ -12,11 +12,16 @@ from .serializers import (
     BarberSerializer,
     ScheduleSerializer,
 )
-
+from authentication.permissions import (
+    IsAuthenticated,
+    IsAdmin,
+    IsUser,
+)
 
 class ServiceListView(generics.ListAPIView):
     queryset = ServiceModel.objects.all()
     serializer_class = ServiceSerializer
+    # permission_classes = [IsAuthenticated, IsAdmin]
 
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
