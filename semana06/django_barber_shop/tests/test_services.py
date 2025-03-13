@@ -37,3 +37,25 @@ def test_services_list(client_with_token):
     response = client_with_token.get('/api/services/list')
     print(response)
     assert response.status_code == status.HTTP_200_OK
+    assert response.data['object'] == 'list_services'
+    assert isinstance(response.data['data'], list)
+
+@pytest.mark.django_db
+def test_services_create(client_with_token):
+    service_data = {
+        'name': 'Test Service',
+        'description': 'Test Description',
+        'price': 100,
+        'duration': 1,
+    }
+    response = client_with_token.post(
+        '/api/services/create',
+        service_data,
+        format='json'
+    )
+    print(response)
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data['object'] == 'create_service'
+    assert isinstance(response.data['data'], dict)
+    assert isinstance(response.data['data']['id'], int)
+    assert response.data['data']['name'] == service_data['name']
