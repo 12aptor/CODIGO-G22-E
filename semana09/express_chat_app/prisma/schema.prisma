@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ONLINE
+  OFFLINE
+  IDLE
+}
+
+model Users {
+  id         Int        @id @default(autoincrement())
+  username   String     @unique @db.Char(20)
+  email      String     @unique @db.Char(200)
+  password   String
+  avatar     String
+  status     UserStatus @default(ONLINE)
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  messages   Messages[]
+
+  @@map("users")
+}
+
+model Messages {
+  id         Int      @id @default(autoincrement())
+  content    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  author_id  Int
+  author     Users    @relation(fields: [author_id], references: [id])
+  channel_id Int
+  channel    Channels @relation(fields: [channel_id], references: [id])
+
+  @@map("messages")
+}
+
+enum ChannelType {
+  TEXT
+  VOICE
+}
+
+model Channels {
+  id         Int         @id @default(autoincrement())
+  name       String      @db.Char(100)
+  type       ChannelType @default(TEXT)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  messages   Messages[]
+
+  @@map("channels")
+}
