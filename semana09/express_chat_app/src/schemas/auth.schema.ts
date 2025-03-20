@@ -5,3 +5,8 @@ export const registerSchema = z.object({
   email: z.string().email().trim(),
   password: z.string().trim(),
 });
+
+export const loginSchema = z.object({
+  email: z.string().email().trim(),
+  password: z.string().trim()
+})

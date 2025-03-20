@@ -8,3 +8,4 @@ const upload = multer({ storage });
 export const authRouter = Router();
 
 authRouter.post("/register", upload.single("avatar"), authResource.register);
+authRouter.post("/login", authResource.login);

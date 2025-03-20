@@ -2,6 +2,8 @@ import express, { type Express } from "express";
 import { authRouter } from "./routes/auth.router";
 import { Server } from "socket.io";
 import { createServer } from "http"
+import cors from "cors";
+import morgan from "morgan";
 
 const main = () => {
   const app: Express = express();
@@ -13,6 +15,10 @@ const main = () => {
       origin: "*",
     }
   })
+
+  app.use(express.json());
+  app.use(cors());
+  app.use(morgan("dev"));
 
   app.get("/", (_, res) => {
     res.json({
