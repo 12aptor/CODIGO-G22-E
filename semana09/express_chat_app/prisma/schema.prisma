@@ -47,7 +47,7 @@ enum ChannelType {
 
 model Channels {
   id         Int         @id @default(autoincrement())
-  name       String      @db.Char(100)
+  name       String      @db.VarChar(100)
   type       ChannelType @default(TEXT)
   created_at DateTime    @default(now())
   updated_at DateTime    @updatedAt

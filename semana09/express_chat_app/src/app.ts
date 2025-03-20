@@ -4,6 +4,9 @@ import { Server } from "socket.io";
 import { createServer } from "http"
 import cors from "cors";
 import morgan from "morgan";
+import { channelRouter } from "./routes/channel.router";
+import { prisma } from "./config/prisma";
+import { messageRouter } from "./routes/message.router";
 
 const main = () => {
   const app: Express = express();
@@ -28,20 +31,39 @@ const main = () => {
   });
 
   app.use("/api/auth", authRouter);
+  app.use("/api/channels", channelRouter);
+  app.use("/api/messages", messageRouter);
 
   io.on("connection", (socket) => {
-    socket.on("join", (channel_id: string) => {
-      socket.join(channel_id);
+    socket.on("join", (channel: string) => {
+      socket.join(channel);
     })
 
     type Message = {
       content: string;
-      channel_id: string;
+      channel: string;
       author_id: number;
     }
 
-    socket.on("message", (message: Message) => {
-      io.to(message.channel_id).emit("message", message);
+    socket.on("message", async (message: Message) => {
+      const channel_id = parseInt(message.channel.split("-")[1])
+
+      const newMessage = await prisma.messages.create({
+        data: {
+          content: message.content,
+          author_id: message.author_id,
+          channel_id: channel_id
+        },
+        include: {
+          author: {
+            select: {
+              username: true
+            }
+          }
+        }
+      })
+
+      io.to(message.channel).emit("message", newMessage);
     })
   })
 
