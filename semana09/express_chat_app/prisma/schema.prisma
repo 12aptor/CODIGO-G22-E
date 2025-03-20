@@ -15,8 +15,8 @@ enum UserStatus {
 
 model Users {
   id         Int        @id @default(autoincrement())
-  username   String     @unique @db.Char(20)
-  email      String     @unique @db.Char(200)
+  username   String     @unique @db.VarChar(20)
+  email      String     @unique @db.VarChar(200)
   password   String
   avatar     String
   status     UserStatus @default(ONLINE)

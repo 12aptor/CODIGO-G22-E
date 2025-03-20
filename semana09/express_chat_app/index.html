@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sockets con Express</title>
+</head>
+<body>
+    <h1>Chat en tiempo real</h1>
+
+    <ul id="messages"></ul>
+    <input type="text" placeholder="Escribir..." id="input">
+    <button type="button" id="send">Enviar</button>
+
+    <script type="module">
+        import { io } from "https://cdn.socket.io/4.8.1/socket.io.esm.min.js";
+
+        const socket = io("http://localhost:3000");
+
+        socket.on("message", (message) => {
+            const messages = document.getElementById("messages");
+
+            const li = document.createElement("li");
+            li.innerText = `${message.username}: ${message.content}`;
+            messages.appendChild(li);
+        })
+
+        const input = document.getElementById("input");
+        const sendBtn = document.getElementById("send");
+        sendBtn.addEventListener("click", () => {
+            socket.emit("message", {
+                content: input.value,
+                username: "Pepito"
+            });
+        })
+    </script>
+</body>
+</html>

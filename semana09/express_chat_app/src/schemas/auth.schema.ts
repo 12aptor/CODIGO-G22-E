@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-  username: z.string(),
-  email: z.string().email(),
-  password: z.string(),
+  username: z.string().trim(),
+  email: z.string().email().trim(),
+  password: z.string().trim(),
 });
