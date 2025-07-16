@@ -127,7 +127,7 @@ SELECT id, title, director FROM movies WHERE id = 1;
 
 - **AND**: Operador lógico Y.
     ```sql
-    SELECT * FROM movies WHERE year >= 2000 AND year <=2010;
+    SELECT * FROM movies WHERE year >= 2000 AND year <= 2010;
     ```
 
 - **OR**: Operador lógico Ó.
